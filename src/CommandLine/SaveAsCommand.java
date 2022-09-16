@@ -1,25 +1,29 @@
 package CommandLine;
 
-import bg.tu_varna.sit.Save;
-import bg.tu_varna.sit.SaveAs;
+import Exceptions.FileNotOpenedException;
+import Exceptions.InvalidCommandFormatException;
 import bg.tu_varna.sit.Student;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Arrays;
 
 public class SaveAsCommand implements Command{
     @Override
-    public void execute(Object[] args) throws IOException
-    {
+    public void execute(Object[] args) throws FileNotOpenedException, IOException, InvalidCommandFormatException {
+
+        if(args.length==0){
+            throw new InvalidCommandFormatException();
+        }
+
+        if (!OpenCommand.opened)
+        {
+            throw new FileNotOpenedException();
+        }
+
         String[] argsProcessing = Arrays.copyOf(args, args.length, String[].class);
         String saveFileName=String.join(" ",argsProcessing);
         File file = new File(saveFileName + ".txt");
 
-        System.out.println(OpenCommand.fileName);
-        System.out.println(saveFileName);
 
         if(file.exists())
         {

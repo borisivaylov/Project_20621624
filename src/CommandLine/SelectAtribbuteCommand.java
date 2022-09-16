@@ -1,5 +1,7 @@
 package CommandLine;
 
+import Exceptions.*;
+import bg.tu_varna.sit.ChildWithAttribute;
 import bg.tu_varna.sit.Student;
 
 import java.io.IOException;
@@ -9,59 +11,84 @@ public class SelectAtribbuteCommand implements Command
 {
 
     @Override
-    public void execute(Object[] args) throws IOException {
+    public void execute(Object[] args) throws IOException, FileNotOpenedException, EmptyFileException, StringAttributeException, ElementNotFoundException, ElementHasNoAttributeException, StudentNotFoundException, InvalidCommandFormatException {
+
+        if(args.length<2){
+            throw new InvalidCommandFormatException();
+        }
+
+        if (!OpenCommand.opened)
+        {
+            throw new FileNotOpenedException();
+        }
+        else if(OpenCommand.fileData.isEmpty())
+        {
+            throw new EmptyFileException();
+        }
 
         String id=args[0].toString();
         String attribName=args[1].toString();
-
+        ChildWithAttribute childWithAttribute = null;
+        String noAttributeFound=null;
 
         Student foundStudent = null;
-        Class clazz=null;
-        boolean found=false;
+
+        boolean foundElement=false;
+        boolean findStudent=false;
+
 
         for (Student fileDatum : OpenCommand.fileData) {    //Searching by id
 
             if (fileDatum.getId().equalsIgnoreCase(id)) {
+                findStudent=true;
                 foundStudent = fileDatum;
-                clazz = foundStudent.getClass();
+
             }
         }
-        if (!(foundStudent==null))                          //if a student was found check attributes
+
+        if((attribName.equalsIgnoreCase("name")||attribName.equalsIgnoreCase("age")) && findStudent)
         {
-
-
-            for (Field field : clazz.getDeclaredFields())   // checking basic attributes
+           throw new StringAttributeException();
+        }
+        else if (!(foundStudent==null)&&attribName.equalsIgnoreCase("discipline")) //check if we search for a discipline element
+        {
+            if (foundStudent.discipline.getAttributeName() == null)
             {
+                throw new ElementHasNoAttributeException();
+            }
 
-                if(field.getName().equalsIgnoreCase(attribName))
+            System.out.println(foundStudent.discipline.getAttributeName()+"="+foundStudent.discipline.getAttributeValue());
+        }
+        else if (!(foundStudent==null)) // search in the later added elements
+        {
+            for (String string:foundStudent.values.keySet())
+            {
+                if(string.equalsIgnoreCase(attribName))
                 {
-                    System.out.println(foundStudent.getValue(attribName));
-                    found=true;
-                    break;
+                    childWithAttribute= (ChildWithAttribute) foundStudent.values.get(string);
+                    foundElement=true;
+                }
+                if(foundElement && !(childWithAttribute.getAttributeName()==null))  //if the element is found print it
+                {
+                    System.out.println(childWithAttribute.getAttributeName()+"="+childWithAttribute.getAttributeValue());
                 }
             }
-
-            if(!found) {              // if it is not a basic attribute, search in the later-added attributes
-                for (String name : foundStudent.values.keySet()) {
-                    if (name.equalsIgnoreCase(attribName)) {
-                        System.out.println(foundStudent.getValue(name));
-                        found = true;
-                        break;
-                    }
-                }
-
-            }
-
-            if(!found)  // if the student is found, but attribute is not found
+            if(!foundElement) // if the element doesn't exist
             {
-                System.out.println("Student with id "+id+" does not have an "+attribName+" attribute.");
+                    throw new ElementNotFoundException();
             }
+            else if (childWithAttribute.getAttributeName()==null) //if the found element has no attribute
+            {
+                throw  new ElementHasNoAttributeException();
+            }
+
         }
-        else // if there is no student with such id
+        else
         {
-            System.out.println("Student with this id was not found.....");
-            //препрадка към командния ред
+            throw new StudentNotFoundException();
         }
+
+
     }
 
 }

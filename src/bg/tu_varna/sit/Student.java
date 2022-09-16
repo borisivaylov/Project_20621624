@@ -1,30 +1,37 @@
 package bg.tu_varna.sit;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class Student implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
-    public HashMap<String,Object> values;
+    public HashMap<String, Object> values;
 
     public String id;
     public String name;
-    public String grades;
-    public Discipline discipline;
+    public String age;
+    public Discipline discipline = null;
 
-    public Student(String id, String name, String grades,Discipline discipline) {
-        this.values=new HashMap<String,Object>();
+    public Student(String id, String name, String age) {
+        this.values = new HashMap<String, Object>();
         this.id = id;
         this.name = name;
-        this.grades = grades;
-        this.discipline=discipline;
-        values.put("id",this.getId());
-        values.put("name",this.getName());
-        values.put("discipline",this.getDiscipline());
-        values.put("grades",this.getGrades());
+        this.age = age;
+        // this.discipline=discipline;
+        //values.put("id",this.getId());
+        //values.put("name", this.getName());
+        //values.put("age", this.getAge());
+        //  values.put("discipline",this.getDiscipline());
     }
+
+    public Student(String id) {
+        this.values = new HashMap<String, Object>();
+        this.id = id;
+    }
+
 
     public String getId() {
         return id;
@@ -40,14 +47,16 @@ public class Student implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+
     }
 
-    public String getGrades() {
-        return grades;
+    public String getAge() {
+        return age;
     }
 
-    public void setGrades(String grades) {
-        this.grades = grades;
+    public void setAge(String grades) {
+        this.age = grades;
+
     }
 
     public Discipline getDiscipline() {
@@ -56,6 +65,7 @@ public class Student implements Serializable {
 
     public void setDiscipline(Discipline discipline) {
         this.discipline = discipline;
+
     }
 
     public HashMap<String, Object> getValues() {
@@ -66,35 +76,42 @@ public class Student implements Serializable {
         this.values = values;
     }
 
-    public void addValue(String name, Object value)
-    {
-        values.put(name,value);
+    public void addValue(String name, Object value) {
+        values.put(name, value);
     }
-    public void removeValue(String name)
-    {
-        values.remove(name);
+
+    public void removeValue(String name) {
+        //values.remove(name);
+        values.put(name, "");
     }
-    public String getValue(String name)
-    {
-        return  values.get(name).toString();
+
+    public String getValue(String name) {
+        return values.get(name).toString();
     }
 
     @Override
     public String toString() {
-        System.out.println("<Student>");
+        System.out.println("<Student id= " + getId() + " >");
 
-        for(String name: values.keySet())
+        System.out.println("       <Name> " + getName() + " </Name>");
+        System.out.println("       <Age> " + getAge() + " </Age>");
+        if(discipline==null)
         {
-            Object value = values.get(name);
-            if(value instanceof String) {
-                System.out.println("       <" + name + "> " + value + " </" + name + ">");
-            }
-            else if(value instanceof Discipline)
-            {
-                System.out.println( value );
-            }
+            System.out.println("       <Discipline> </Discipline>");
         }
-        System.out.println("</Student>");
-        return ("");
+        else {
+            System.out.println("       " + getDiscipline());
+        }
+
+        for (String name : values.keySet()) {
+            Object value = values.get(name);
+
+            System.out.println(value);
+        }
+        return ("</Student>");
     }
+
+
 }
+
+

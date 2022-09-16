@@ -32,7 +32,7 @@ public class Specialty implements Serializable {
     public String toString() {
         return  "<Specialty>"+
                 "\n                         <faculty_name> " + faculty_name + " </faculty_name>\n" +
-                "                         <spec_name> " + spec_name + "</spec_name>\n"+
+                "                         <spec_name> " + spec_name + " </spec_name>\n"+
                 "               </Specialty>";
 
     }

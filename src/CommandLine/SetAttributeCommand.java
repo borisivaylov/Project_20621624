@@ -1,5 +1,8 @@
 package CommandLine;
 
+import Exceptions.*;
+import bg.tu_varna.sit.ChildWithAttribute;
+import bg.tu_varna.sit.Discipline;
 import bg.tu_varna.sit.Specialty;
 import bg.tu_varna.sit.Student;
 
@@ -8,40 +11,74 @@ import java.lang.reflect.Field;
 
 public class SetAttributeCommand implements Command{
     @Override
-    public void execute(Object[] args) throws IOException {
+    public void execute(Object[] args) throws IOException, FileNotOpenedException, EmptyFileException, StringCantHaveAttributeException, ElementNotFoundException, StudentNotFoundException, InvalidCommandFormatException {
 
-        String id=args[0].toString();
-        String key=args[1].toString();
-        String value=args[2].toString();
+        if(args.length<4){
+            throw new InvalidCommandFormatException();
+        }
 
-        Student foundStudent = null;
-        Class clazz = null;
-        boolean foundAttribute=false;
-        for (Student fileDatum : OpenCommand.fileData) {
-            if (fileDatum.getId().equalsIgnoreCase(id)) {
-                foundStudent = fileDatum;
-                clazz = foundStudent.getClass();
+        if (!OpenCommand.opened)
+        {
+            throw new FileNotOpenedException();
+        }
+        else if(OpenCommand.fileData.isEmpty())
+        {
+            throw new EmptyFileException();
+        }
+
+
+        String studentId=args[0].toString();
+        String elementId=args[1].toString();
+        String attributeKey= args[2].toString();
+        String attributeValue=args[3].toString();
+
+
+        Student foundStudent=null;
+        Object foundElement=null;
+
+        for(Student everyStudent:OpenCommand.fileData)          //Searching for student by id
+        {
+            if(everyStudent.getId().equalsIgnoreCase(studentId))
+            {
+                foundStudent=everyStudent;
             }
         }
-        if(!(foundStudent == null) && (key.equalsIgnoreCase("discipline")))
-        {
-            String facultyName=args[3].toString();
-            String specName=args[4].toString();
-            Specialty specialty=new Specialty(facultyName,specName);
-            foundStudent.discipline.setDiscName(value);
-            foundStudent.discipline.setSpecialty(specialty);
 
+        if(!(foundStudent==null)&&(elementId.equalsIgnoreCase("name")||(elementId.equalsIgnoreCase("age"))))
+        {
+            throw new StringCantHaveAttributeException();
         }
-        else if (!(foundStudent == null)) {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.getName().equalsIgnoreCase(key)) {
-                    foundStudent.values.put(key,value);
-                    foundAttribute=true;
+
+        if( !(foundStudent==null) &&elementId.equalsIgnoreCase("discipline"))
+            {
+                foundStudent.discipline.setAttributeName(attributeKey);
+                foundStudent.discipline.setAttributeValue(attributeValue);
+                System.out.println("Attribute successfully set");
+            }
+        else if(!(foundStudent==null)) {
+
+            for (String string : foundStudent.values.keySet()) // finding element
+            {
+                if (string.equalsIgnoreCase(elementId)) {
+                    foundElement = foundStudent.values.get(string);
                 }
             }
-        } else {
-            System.out.println("Student with this id was not found.....");
-            //препрадка към командния ред
+
+            if (foundElement==null)
+            {
+                throw new ElementNotFoundException();
+            }
+            else if (foundElement instanceof ChildWithAttribute) {
+                ((ChildWithAttribute) foundElement).setAttributeName(attributeKey);
+                ((ChildWithAttribute) foundElement).setAttributeValue(attributeValue);
+                foundStudent.values.put(elementId, foundElement);
+                System.out.println("Attribute successfully set");
+            }
+
+        }
+
+        else {
+            throw new StudentNotFoundException();
         }
     }
 

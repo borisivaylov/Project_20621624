@@ -1,5 +1,6 @@
 package CommandLine;
 
+import Exceptions.InvalidCommandFormatException;
 import bg.tu_varna.sit.Student;
 
 import java.io.*;
@@ -13,7 +14,11 @@ public class OpenCommand implements Command{
     public static String fileName;
 
     @Override
-    public void execute(Object[] args) throws IOException {
+    public void execute(Object[] args) throws IOException, InvalidCommandFormatException {
+
+        if(args.length==0){
+            throw new InvalidCommandFormatException();
+        }
 
         Student dataRead;
         String[] argsProcessing = Arrays.copyOf(args, args.length, String[].class);
@@ -24,6 +29,7 @@ public class OpenCommand implements Command{
             if(file.length()==0)
             {
                 System.out.println("Successfully opened "+fileName);
+                opened=true;
             }
             else {
                 System.out.println("Successfully opened " + fileName);

@@ -15,11 +15,11 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         while(true) {
             try {
-                //Scanner sc = new Scanner(System.in);
+                System.out.print(">");
                 String variables = sc.nextLine();
                 String[] command;
 
-                //System.out.println(sc);
+
 
                 command = variables.split("\\s+");
                 String commandName = command[0];
@@ -37,66 +37,5 @@ public class Main {
             {System.out.println(e);}
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*
-        Open openFile=new Open();
-        Close closeFile=new Close();
-        Save saveFile=new Save();
-        SaveAs saveAsFile=new SaveAs();
-        Print printFile=new Print();
-        DeleteAttribute deleteAttribute=new DeleteAttribute();
-        Open.fileName="students1";
-        Specialty specialty=new Specialty("FITA","SIT");
-        Discipline discipline=new Discipline("OOP1",specialty);
-
-
-        Student st1=new Student("2062","Ivan","4.62",discipline);
-        Student st3=new Student("2063","Petur","4.82",discipline);
-        Student st4=new Student("2064","Kristian","5.62",discipline);
-
-        openFile.OpenFile(Open.fileName,Open.fileData);
-        printFile.printing(Open.fileData);
-        closeFile.CloseFile();
-        System.out.println(Open.fileData);
-        System.out.println(Open.opened);
-
-
-*/
     }}
 
